@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monarch Markdown</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              monarch: {
+                bg: '#1a102c',
+                'bg-light': '#211339',
+                main: '#2e1a52',
+                light: '#4d2da3',
+                accent: '#9d5bff',
+                'accent-hover': '#b88cff',
+                text: '#e6ddeb',
+                'text-dark': '#bca9d4',
+              },
+            },
+            fontFamily: {
+                sans: ['Inter', 'sans-serif'],
+                mono: ['Fira Code', 'monospace'],
+            },
+            keyframes: {
+              pulseGlow: {
+                '0%, 100%': { boxShadow: '0 0 8px 0px rgba(157, 91, 255, 0.4)', color: '#e6ddeb' },
+                '50%': { boxShadow: '0 0 20px 4px rgba(157, 91, 255, 0.8)', color: '#ffffff' },
+              },
+              fadeInDown: {
+                'from': { opacity: '0', transform: 'translateY(-1rem)' },
+                'to': { opacity: '1', transform: 'translateY(0)' },
+              },
+            },
+            animation: {
+              pulseGlow: 'pulseGlow 3s ease-in-out infinite',
+              fadeInDown: 'fadeInDown 0.3s ease-out forwards',
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typo-js@1.2.1/typo.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      .misspelled {
+        text-decoration: underline wavy red 1px;
+        text-decoration-skip-ink: none;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "dompurify": "https://aistudiocdn.com/dompurify@^3.3.0",
+    "marked": "https://aistudiocdn.com/marked@^17.0.0",
+    "highlight.js": "https://aistudiocdn.com/highlight.js@^11.11.1",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.417.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-white dark:bg-monarch-bg transition-colors duration-500">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
