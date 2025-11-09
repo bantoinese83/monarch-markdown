@@ -1,22 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { MonarchIcon, SunIcon, MoonIcon, DownloadIcon, MessageSquareIcon, ListTreeIcon } from './icons';
+import {
+  MonarchIcon,
+  SunIcon,
+  MoonIcon,
+  DownloadIcon,
+  MessageSquareIcon,
+  ListTreeIcon,
+} from './icons';
 import { Theme } from '../types';
 
 interface HeaderProps {
-    onExport: () => void;
-    wordCount: number;
-    charCount: number;
-    readingTime: number;
-    onToggleChat: () => void;
-    isChatOpen: boolean;
-    onToggleOutline: () => void;
-    isOutlineOpen: boolean;
+  onExport: () => void;
+  wordCount: number;
+  charCount: number;
+  readingTime: number;
+  onToggleChat: () => void;
+  isChatOpen: boolean;
+  onToggleOutline: () => void;
+  isOutlineOpen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ 
-    onExport, wordCount, charCount, readingTime, 
-    onToggleChat, isChatOpen,
-    onToggleOutline, isOutlineOpen
+const Header: React.FC<HeaderProps> = ({
+  onExport,
+  wordCount,
+  charCount,
+  readingTime,
+  onToggleChat,
+  isChatOpen,
+  onToggleOutline,
+  isOutlineOpen,
 }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -48,10 +60,10 @@ const Header: React.FC<HeaderProps> = ({
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(current => {
-        if(current === Theme.Light) return Theme.Monarch;
-        if(current === Theme.Monarch) return Theme.Light;
-        return Theme.Light; // fallback
+    setTheme((current) => {
+      if (current === Theme.Light) return Theme.Monarch;
+      if (current === Theme.Monarch) return Theme.Light;
+      return Theme.Light; // fallback
     });
   };
 
@@ -62,26 +74,26 @@ const Header: React.FC<HeaderProps> = ({
         <h1 className="text-xl font-bold text-gray-800 dark:text-monarch-text">
           Monarch <span className="font-light">Markdown</span>
         </h1>
-         <div className="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-monarch-main ml-3 pl-3 text-xs text-gray-500 dark:text-monarch-text-dark font-mono tracking-tighter">
-            <span>{wordCount} words</span>
-            <div className="h-3 w-px bg-gray-300 dark:bg-monarch-main"></div>
-            <span>{charCount} chars</span>
-            {readingTime > 0 && (
-                <>
-                    <div className="h-3 w-px bg-gray-300 dark:bg-monarch-main"></div>
-                    <span>{readingTime} min read</span>
-                </>
-            )}
+        <div className="hidden sm:flex items-center gap-3 border-l border-gray-200 dark:border-monarch-main ml-3 pl-3 text-xs text-gray-500 dark:text-monarch-text-dark font-mono tracking-tighter">
+          <span>{wordCount} words</span>
+          <div className="h-3 w-px bg-gray-300 dark:bg-monarch-main"></div>
+          <span>{charCount} chars</span>
+          {readingTime > 0 && (
+            <>
+              <div className="h-3 w-px bg-gray-300 dark:bg-monarch-main"></div>
+              <span>{readingTime} min read</span>
+            </>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-2">
         <button
-            onClick={onExport}
-            className="p-2 rounded-lg text-gray-700 dark:text-monarch-text-dark hover:bg-gray-200 dark:hover:bg-monarch-main transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-monarch-accent hover:scale-110"
-            aria-label="Export markdown"
-            title="Export as .md file"
+          onClick={onExport}
+          className="p-2 rounded-lg text-gray-700 dark:text-monarch-text-dark hover:bg-gray-200 dark:hover:bg-monarch-main transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-monarch-accent hover:scale-110"
+          aria-label="Export markdown"
+          title="Export as .md file"
         >
-            <DownloadIcon className="w-5 h-5" />
+          <DownloadIcon className="w-5 h-5" />
         </button>
         <button
           onClick={toggleTheme}
@@ -94,22 +106,22 @@ const Header: React.FC<HeaderProps> = ({
             <SunIcon className="w-5 h-5 text-monarch-text" />
           )}
         </button>
-         <div className="h-6 w-px bg-gray-200 dark:bg-monarch-main mx-1"></div>
+        <div className="h-6 w-px bg-gray-200 dark:bg-monarch-main mx-1"></div>
         <button
-            onClick={onToggleOutline}
-            className={`p-2 rounded-lg text-gray-700 dark:text-monarch-text-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-monarch-accent hover:scale-110 ${isOutlineOpen ? 'bg-monarch-accent/20 dark:bg-monarch-main' : 'hover:bg-gray-200 dark:hover:bg-monarch-main'}`}
-            aria-label="Toggle Document Outline"
-            title="Toggle Document Outline"
+          onClick={onToggleOutline}
+          className={`p-2 rounded-lg text-gray-700 dark:text-monarch-text-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-monarch-accent hover:scale-110 ${isOutlineOpen ? 'bg-monarch-accent/20 dark:bg-monarch-main' : 'hover:bg-gray-200 dark:hover:bg-monarch-main'}`}
+          aria-label="Toggle Document Outline"
+          title="Toggle Document Outline"
         >
-            <ListTreeIcon className={`w-5 h-5 ${isOutlineOpen ? 'text-monarch-accent' : ''}`} />
+          <ListTreeIcon className={`w-5 h-5 ${isOutlineOpen ? 'text-monarch-accent' : ''}`} />
         </button>
         <button
-            onClick={onToggleChat}
-            className={`p-2 rounded-lg text-gray-700 dark:text-monarch-text-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-monarch-accent hover:scale-110 ${isChatOpen ? 'bg-monarch-accent/20 dark:bg-monarch-main' : 'hover:bg-gray-200 dark:hover:bg-monarch-main'}`}
-            aria-label="Toggle AI Chat"
-            title="Toggle AI Chat"
+          onClick={onToggleChat}
+          className={`p-2 rounded-lg text-gray-700 dark:text-monarch-text-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-monarch-accent hover:scale-110 ${isChatOpen ? 'bg-monarch-accent/20 dark:bg-monarch-main' : 'hover:bg-gray-200 dark:hover:bg-monarch-main'}`}
+          aria-label="Toggle AI Chat"
+          title="Toggle AI Chat"
         >
-            <MessageSquareIcon className={`w-5 h-5 ${isChatOpen ? 'text-monarch-accent' : ''}`} />
+          <MessageSquareIcon className={`w-5 h-5 ${isChatOpen ? 'text-monarch-accent' : ''}`} />
         </button>
       </div>
     </header>

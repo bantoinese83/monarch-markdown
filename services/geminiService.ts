@@ -1,9 +1,9 @@
-import { GoogleGenAI, Modality, Chat, FunctionDeclaration, Type } from "@google/genai";
+import { GoogleGenAI, Modality, Chat, FunctionDeclaration, Type } from '@google/genai';
 import type { Tone } from '../types';
 
 // Ensure the API key is available, otherwise throw an error.
 if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable not set");
+  throw new Error('API_KEY environment variable not set');
 }
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -13,73 +13,73 @@ const imageModel = 'gemini-2.5-flash-image';
 
 // --- Tool and Function Calling Definitions for Chat ---
 const toolDeclarations: FunctionDeclaration[] = [
-    {
-        name: 'getSelection',
-        description: 'Get the currently selected text from the editor.',
-        parameters: { type: Type.OBJECT, properties: {} }
+  {
+    name: 'getSelection',
+    description: 'Get the currently selected text from the editor.',
+    parameters: { type: Type.OBJECT, properties: {} },
+  },
+  {
+    name: 'getCurrentDocument',
+    description: 'Get the full content of the current markdown document.',
+    parameters: { type: Type.OBJECT, properties: {} },
+  },
+  {
+    name: 'replaceContent',
+    description: 'Replace the entire document content with new content.',
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        newContent: {
+          type: Type.STRING,
+          description: 'The new content to replace the entire document with.',
+        },
+      },
+      required: ['newContent'],
     },
-    {
-        name: 'getCurrentDocument',
-        description: 'Get the full content of the current markdown document.',
-        parameters: { type: Type.OBJECT, properties: {} }
+  },
+  {
+    name: 'insertAtCursor',
+    description: 'Insert text at the current cursor position.',
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        textToInsert: {
+          type: Type.STRING,
+          description: 'The text to be inserted at the cursor.',
+        },
+      },
+      required: ['textToInsert'],
     },
-    {
-        name: 'replaceContent',
-        description: 'Replace the entire document content with new content.',
-        parameters: { 
-            type: Type.OBJECT,
-            properties: {
-                newContent: {
-                    type: Type.STRING,
-                    description: 'The new content to replace the entire document with.'
-                }
-            },
-            required: ['newContent']
-        }
+  },
+  {
+    name: 'replaceSelection',
+    description: 'Replace the currently selected text with new text.',
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        replacementText: {
+          type: Type.STRING,
+          description: 'The text to replace the current selection with.',
+        },
+      },
+      required: ['replacementText'],
     },
-    {
-        name: 'insertAtCursor',
-        description: 'Insert text at the current cursor position.',
-        parameters: {
-            type: Type.OBJECT,
-            properties: {
-                textToInsert: {
-                    type: Type.STRING,
-                    description: 'The text to be inserted at the cursor.'
-                }
-            },
-            required: ['textToInsert']
-        }
-    },
-    {
-        name: 'replaceSelection',
-        description: 'Replace the currently selected text with new text.',
-        parameters: {
-            type: Type.OBJECT,
-            properties: {
-                replacementText: {
-                    type: Type.STRING,
-                    description: 'The text to replace the current selection with.'
-                }
-            },
-            required: ['replacementText']
-        }
-    }
+  },
 ];
 
 export const createChatSession = (): Chat => {
-    return ai.chats.create({
-        model: textModel,
-        config: {
-            systemInstruction: `You are Monarch, an expert AI assistant integrated into a markdown editor. Your goal is to help users write, edit, and brainstorm.
+  return ai.chats.create({
+    model: textModel,
+    config: {
+      systemInstruction: `You are Monarch, an expert AI assistant integrated into a markdown editor. Your goal is to help users write, edit, and brainstorm.
 - Be concise and helpful.
 - When asked to write or generate content, respond in well-formatted markdown.
 - You can use the available tools to interact with the document. For example, to rephrase a selection, first call 'getSelection', then provide the rephrased text.
 - Do not describe your actions unless asked. For example, if you use a tool, don't say "I have used the tool to...". Just provide the final result.
 - If a user asks for something you can't do, explain why and suggest alternatives.`,
-            tools: [{ functionDeclarations: toolDeclarations }]
-        },
-    });
+      tools: [{ functionDeclarations: toolDeclarations }],
+    },
+  });
 };
 
 const TONE_PROMPTS: Record<Tone, string> = {
@@ -107,11 +107,15 @@ export const rewriteText = async (markdownText: string, tone: Tone): Promise<str
       model: textModel,
       contents: prompt,
     });
-    return response.text.trim();
+    const text = response.text;
+    if (!text) {
+      throw new Error('No text response from API.');
+    }
+    return text.trim();
   } catch (error) {
-    console.error("Error rewriting text with Gemini:", error);
+    console.error('Error rewriting text with Gemini:', error);
     // Re-throw a more specific error for the UI to handle.
-    throw new Error("Failed to communicate with the Gemini API.");
+    throw new Error('Failed to communicate with the Gemini API.');
   }
 };
 
@@ -128,10 +132,14 @@ export const fixGrammarAndSpelling = async (text: string): Promise<string> => {
       model: textModel,
       contents: prompt,
     });
-    return response.text.trim();
+    const text = response.text;
+    if (!text) {
+      throw new Error('No text response from API.');
+    }
+    return text.trim();
   } catch (error) {
-    console.error("Error fixing grammar with Gemini:", error);
-    throw new Error("Failed to communicate with the Gemini API.");
+    console.error('Error fixing grammar with Gemini:', error);
+    throw new Error('Failed to communicate with the Gemini API.');
   }
 };
 
@@ -148,10 +156,14 @@ export const generateFromPrompt = async (userPrompt: string): Promise<string> =>
       model: textModel,
       contents: prompt,
     });
-    return response.text.trim();
+    const text = response.text;
+    if (!text) {
+      throw new Error('No text response from API.');
+    }
+    return text.trim();
   } catch (error) {
-    console.error("Error generating from prompt with Gemini:", error);
-    throw new Error("Failed to communicate with the Gemini API.");
+    console.error('Error generating from prompt with Gemini:', error);
+    throw new Error('Failed to communicate with the Gemini API.');
   }
 };
 
@@ -174,16 +186,15 @@ export const generateImageFromPrompt = async (userPrompt: string): Promise<strin
 
     for (const part of response.candidates?.[0]?.content?.parts ?? []) {
       if (part.inlineData) {
-        return part.inlineData.data;
+        return part.inlineData.data ?? null;
       }
     }
     return null;
   } catch (error) {
-    console.error("Error generating image with Gemini:", error);
-    throw new Error("Failed to generate image from the Gemini API.");
+    console.error('Error generating image with Gemini:', error);
+    throw new Error('Failed to generate image from the Gemini API.');
   }
 };
-
 
 /**
  * Generates speech from text using the Gemini TTS model.
@@ -204,7 +215,7 @@ export const generateSpeech = async (text: string): Promise<string> => {
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-tts",
+      model: 'gemini-2.5-flash-preview-tts',
       contents: [{ parts: [{ text: cleanText }] }],
       config: {
         responseModalities: [Modality.AUDIO],
@@ -213,11 +224,11 @@ export const generateSpeech = async (text: string): Promise<string> => {
 
     const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
     if (!base64Audio) {
-        throw new Error("No audio data returned from API.");
+      throw new Error('No audio data returned from API.');
     }
     return base64Audio;
   } catch (error) {
-    console.error("Error generating speech with Gemini:", error);
-    throw new Error("Failed to communicate with the Gemini TTS API.");
+    console.error('Error generating speech with Gemini:', error);
+    throw new Error('Failed to communicate with the Gemini TTS API.');
   }
 };

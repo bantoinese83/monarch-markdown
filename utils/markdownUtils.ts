@@ -1,5 +1,5 @@
 import type { OutlineItem } from '../types';
-import { Slugger } from 'marked';
+import { Slugger } from './slugger';
 
 /**
  * Parses markdown text to extract H1, H2, and H3 headings for an outline.

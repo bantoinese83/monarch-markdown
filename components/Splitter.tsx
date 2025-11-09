@@ -11,7 +11,7 @@ const Splitter: React.FC<SplitterProps> = ({ onMouseDown }) => {
       onMouseDown={onMouseDown}
       aria-hidden="true"
     >
-        <div className="w-px h-full bg-gray-200 dark:bg-monarch-main mx-auto transition-colors duration-200 group-hover:bg-monarch-accent"></div>
+      <div className="w-px h-full bg-gray-200 dark:bg-monarch-main mx-auto transition-colors duration-200 group-hover:bg-monarch-accent"></div>
     </div>
   );
 };

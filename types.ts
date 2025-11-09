@@ -6,7 +6,11 @@ declare global {
   interface Window {
     DOMPurify: typeof DOMPurify;
     hljs: typeof hljs;
-    Typo: new (dictionary: string, affData: string, dicData: string) => {
+    Typo: new (
+      dictionary: string,
+      affData: string,
+      dicData: string
+    ) => {
       check: (word: string) => boolean;
       suggest: (word: string, limit?: number) => string[];
     };

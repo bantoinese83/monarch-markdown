@@ -1,4 +1,3 @@
-
 export const INITIAL_MARKDOWN = `# 2025 professional web design directions: 7 strategic UX trends
 
 **By Ryan Kane** | *8 min read*

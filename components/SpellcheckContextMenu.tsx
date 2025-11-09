@@ -7,7 +7,11 @@ interface SpellcheckContextMenuProps {
   onClose: () => void;
 }
 
-const SpellcheckContextMenu: React.FC<SpellcheckContextMenuProps> = ({ data, onSelect, onClose }) => {
+const SpellcheckContextMenu: React.FC<SpellcheckContextMenuProps> = ({
+  data,
+  onSelect,
+  onClose,
+}) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const { word, suggestions } = data;
   const [menuPosition, setMenuPosition] = useState({ top: data.y, left: data.x, opacity: 0 });
@@ -33,7 +37,7 @@ const SpellcheckContextMenu: React.FC<SpellcheckContextMenuProps> = ({ data, onS
     if (menuRef.current) {
       const { innerWidth, innerHeight } = window;
       const { offsetWidth: menuWidth, offsetHeight: menuHeight } = menuRef.current;
-      
+
       let top = data.y;
       let left = data.x;
 
@@ -44,10 +48,12 @@ const SpellcheckContextMenu: React.FC<SpellcheckContextMenuProps> = ({ data, onS
         top = innerHeight - menuHeight - 10;
       }
 
-      setMenuPosition({ top, left, opacity: 1 });
+      // Use requestAnimationFrame to avoid synchronous state updates in effects
+      requestAnimationFrame(() => {
+        setMenuPosition({ top, left, opacity: 1 });
+      });
     }
   }, [data.x, data.y]);
-
 
   return (
     <div
@@ -55,7 +61,7 @@ const SpellcheckContextMenu: React.FC<SpellcheckContextMenuProps> = ({ data, onS
       className="fixed z-50 w-48 bg-white dark:bg-monarch-bg-light border border-gray-200 dark:border-monarch-main rounded-lg shadow-2xl animate-fadeInDown transition-opacity"
       style={{
         ...menuPosition,
-        animationDuration: '150ms'
+        animationDuration: '150ms',
       }}
       onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing the menu via App's listener
     >

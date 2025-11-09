@@ -1,6 +1,24 @@
 import React from 'react';
 import type { FormattingAction, TtsState } from '../types';
-import { BoldIcon, ItalicIcon, HeadingIcon, StrikethroughIcon, LinkIcon, ImageIcon, QuoteIcon, CodeIcon, ListUnorderedIcon, ListOrderedIcon, SearchIcon, WordWrapIcon, PlayIcon, PauseIcon, LoaderIcon, StopIcon, PenLineIcon } from './icons';
+import {
+  BoldIcon,
+  ItalicIcon,
+  HeadingIcon,
+  StrikethroughIcon,
+  LinkIcon,
+  ImageIcon,
+  QuoteIcon,
+  CodeIcon,
+  ListUnorderedIcon,
+  ListOrderedIcon,
+  SearchIcon,
+  WordWrapIcon,
+  PlayIcon,
+  PauseIcon,
+  LoaderIcon,
+  StopIcon,
+  PenLineIcon,
+} from './icons';
 
 interface ToolbarProps {
   onFormat: (action: FormattingAction) => void;
@@ -33,15 +51,23 @@ const ToolbarButton: React.FC<{
   </button>
 );
 
-const Toolbar: React.FC<ToolbarProps> = ({ 
-    onFormat, onToggleFind, wordWrap, onToggleWordWrap,
-    ttsState, onTtsPlayPause, onTtsStop, ttsError, isContentPresent,
-    onFixGrammar, isGenerating
+const Toolbar: React.FC<ToolbarProps> = ({
+  onFormat,
+  onToggleFind,
+  wordWrap,
+  onToggleWordWrap,
+  ttsState,
+  onTtsPlayPause,
+  onTtsStop,
+  ttsError,
+  isContentPresent,
+  onFixGrammar,
+  isGenerating,
 }) => {
-  const commonIconClass = "w-5 h-5";
+  const commonIconClass = 'w-5 h-5';
 
   const renderTtsIcon = () => {
-    switch(ttsState) {
+    switch (ttsState) {
       case 'loading':
         return <LoaderIcon className={`${commonIconClass} animate-spin`} />;
       case 'playing':
@@ -89,8 +115,12 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <ListOrderedIcon className={commonIconClass} />
         </ToolbarButton>
         <div className="h-6 w-px bg-gray-200 dark:bg-monarch-main mx-1"></div>
-        <ToolbarButton onClick={onFixGrammar} label="Fix Grammar & Spelling (AI)" disabled={isGenerating || !isContentPresent}>
-            <PenLineIcon className={commonIconClass} />
+        <ToolbarButton
+          onClick={onFixGrammar}
+          label="Fix Grammar & Spelling (AI)"
+          disabled={isGenerating || !isContentPresent}
+        >
+          <PenLineIcon className={commonIconClass} />
         </ToolbarButton>
       </div>
       <div className="flex items-center gap-2">
@@ -115,7 +145,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
               <StopIcon className={`${commonIconClass} text-red-500/80 hover:text-red-500`} />
             </ToolbarButton>
           )}
-           {ttsError && <span className="text-red-400 text-xs ml-2">{ttsError}</span>}
+          {ttsError && <span className="text-red-400 text-xs ml-2">{ttsError}</span>}
         </div>
       </div>
     </div>

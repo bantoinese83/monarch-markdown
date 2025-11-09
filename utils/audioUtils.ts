@@ -1,4 +1,3 @@
-
 /**
  * Decodes a base64 string into a Uint8Array.
  * @param base64 The base64 encoded string.
@@ -26,7 +25,7 @@ export async function decodeAudioData(
   data: Uint8Array,
   ctx: AudioContext,
   sampleRate: number,
-  numChannels: number,
+  numChannels: number
 ): Promise<AudioBuffer> {
   // The API returns raw 16-bit PCM data.
   const dataInt16 = new Int16Array(data.buffer);
