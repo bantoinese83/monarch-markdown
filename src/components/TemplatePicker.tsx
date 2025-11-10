@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DEFAULT_TEMPLATES } from '@/src/constants';
+import { DEFAULT_TEMPLATES, STORAGE_KEYS } from '@/src/constants';
 import type { Template } from '@/src/types';
 import { CloseIcon } from './icons';
 
@@ -12,7 +12,7 @@ interface TemplatePickerProps {
 const TemplatePicker: React.FC<TemplatePickerProps> = ({ isOpen, onClose, onSelectTemplate }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [customTemplates] = useState<Template[]>(() => {
-    const stored = localStorage.getItem('monarch-custom-templates');
+    const stored = localStorage.getItem(STORAGE_KEYS.CUSTOM_TEMPLATES);
     return stored ? JSON.parse(stored) : [];
   });
 
@@ -36,6 +36,7 @@ const TemplatePicker: React.FC<TemplatePickerProps> = ({ isOpen, onClose, onSele
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-monarch-main transition-colors"
+            aria-label="Close template picker"
           >
             <CloseIcon className="w-5 h-5" />
           </button>
@@ -53,6 +54,8 @@ const TemplatePicker: React.FC<TemplatePickerProps> = ({ isOpen, onClose, onSele
                       ? 'bg-monarch-accent/20 text-monarch-accent font-semibold'
                       : 'text-gray-600 dark:text-monarch-text-dark hover:bg-gray-100 dark:hover:bg-monarch-main/50'
                   }`}
+                  aria-label={`Filter templates by ${category}`}
+                  aria-pressed={selectedCategory === category}
                 >
                   {category.charAt(0).toUpperCase() + category.slice(1)}
                 </button>
@@ -70,6 +73,7 @@ const TemplatePicker: React.FC<TemplatePickerProps> = ({ isOpen, onClose, onSele
                     onClose();
                   }}
                   className="text-left p-4 border border-gray-200 dark:border-monarch-main rounded-lg hover:border-monarch-accent hover:shadow-lg transition-all"
+                  aria-label={`Select template: ${template.name}`}
                 >
                   <h3 className="font-semibold text-gray-800 dark:text-monarch-text mb-1">
                     {template.name}

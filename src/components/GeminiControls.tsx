@@ -169,6 +169,7 @@ const GeminiControls: React.FC<GeminiControlsProps> = ({
             }}
             className="px-3 sm:px-4 py-2 hover:bg-[#b88cff] font-bold rounded-lg transition-all duration-200 flex items-center gap-2 disabled:cursor-not-allowed flex-shrink-0 transform hover:scale-105 shadow-lg shadow-[#9d5bff]/20 whitespace-nowrap"
             title="Generate text from prompt"
+            aria-label="Generate text from prompt"
           >
             {isGenerating ? (
               <div className="w-5 h-5 flex-shrink-0 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -192,6 +193,7 @@ const GeminiControls: React.FC<GeminiControlsProps> = ({
             }}
             className="px-3 py-2 hover:bg-[#b88cff] font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed flex-shrink-0 transform hover:scale-105 shadow-lg shadow-[#9d5bff]/20"
             title="Generate image from prompt"
+            aria-label="Generate image from prompt"
           >
             {isGenerating ? (
               <div className="w-5 h-5 flex-shrink-0 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -233,6 +235,7 @@ const GeminiControls: React.FC<GeminiControlsProps> = ({
             style={{
               color: '#1f2937',
             }}
+            aria-label={`Rewrite text with ${tone} tone`}
           >
             {isGenerating ? (
               <div className="w-5 h-5 flex-shrink-0 border-2 border-monarch-accent border-t-transparent rounded-full animate-spin" />

@@ -36,10 +36,12 @@ import {
   type LucideProps,
 } from 'lucide-react';
 
+import { ICON_STROKE_WIDTH } from '@/src/constants';
+
 // A simple HOC to apply consistent styling to all icons from a single point.
 const createIcon = (IconComponent: React.ComponentType<LucideProps>): React.FC<LucideProps> => {
   const WrappedIcon: React.FC<LucideProps> = (props) => (
-    <IconComponent strokeWidth={1.5} {...props} />
+    <IconComponent strokeWidth={ICON_STROKE_WIDTH} {...props} />
   );
   WrappedIcon.displayName = IconComponent.displayName;
   return WrappedIcon;

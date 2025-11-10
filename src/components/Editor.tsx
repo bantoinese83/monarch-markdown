@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useMemo } from 'react';
+import React, { forwardRef, useRef, useMemo, memo } from 'react';
 import type { MisspelledWord } from '@/src/types';
 
 type EditorProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
@@ -41,7 +41,8 @@ const Editor = forwardRef<HTMLTextAreaElement, EditorProps>(
         return { __html: escapeHtml(textValue).replace(/\n$/g, '\n&nbsp;') };
       }
 
-      const annotations = new Array(textValue.length).fill(0).map((_, i) => ({
+      // Use Array.from for better performance than fill + map
+      const annotations = Array.from({ length: textValue.length }, (_, i) => ({
         char: textValue[i],
         isMisspelled: false,
         isFindMatch: false,
@@ -66,7 +67,8 @@ const Editor = forwardRef<HTMLTextAreaElement, EditorProps>(
         }
       });
 
-      let html = '';
+      // Use array join for better performance than string concatenation
+      const htmlParts: string[] = [];
       let inMisspelledSpan = false;
       let inFindMark = false;
 
@@ -82,27 +84,27 @@ const Editor = forwardRef<HTMLTextAreaElement, EditorProps>(
 
         if (ann.isFindMatch && !inFindMark) {
           const className = `rounded-sm ${ann.isCurrentFindMatch ? 'bg-monarch-accent/60' : 'bg-monarch-accent/30'}`;
-          html += `<mark class="${className}">`;
+          htmlParts.push(`<mark class="${className}">`);
           inFindMark = true;
         }
         if (ann.isMisspelled && !inMisspelledSpan) {
-          html += `<span class="misspelled">`;
+          htmlParts.push(`<span class="misspelled">`);
           inMisspelledSpan = true;
         }
 
-        html += escapeHtml(ann.char);
+        htmlParts.push(escapeHtml(ann.char));
 
         if (inMisspelledSpan && isMisspelledDifferent) {
-          html += `</span>`;
+          htmlParts.push(`</span>`);
           inMisspelledSpan = false;
         }
         if (inFindMark && isFindDifferent) {
-          html += `</mark>`;
+          htmlParts.push(`</mark>`);
           inFindMark = false;
         }
       }
 
-      html = html.replace(/\n$/g, '\n&nbsp;');
+      let html = htmlParts.join('').replace(/\n$/g, '\n&nbsp;');
 
       return { __html: html };
     }, [value, matches, currentIndex, misspelledWords]);
@@ -156,4 +158,5 @@ const Editor = forwardRef<HTMLTextAreaElement, EditorProps>(
 
 Editor.displayName = 'Editor';
 
-export default Editor;
+// Memoize Editor to prevent unnecessary re-renders when props haven't changed
+export default memo(Editor);

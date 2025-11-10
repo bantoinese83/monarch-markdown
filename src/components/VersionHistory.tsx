@@ -45,6 +45,7 @@ const VersionHistory: React.FC<VersionHistoryProps> = ({
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-monarch-main transition-colors"
+            aria-label="Close version history"
           >
             <CloseIcon className="w-5 h-5" />
           </button>
@@ -65,6 +66,8 @@ const VersionHistory: React.FC<VersionHistoryProps> = ({
                         ? 'bg-monarch-accent/20 text-monarch-accent font-semibold'
                         : 'text-gray-600 dark:text-monarch-text-dark hover:bg-gray-100 dark:hover:bg-monarch-main/50'
                     }`}
+                    aria-label={`Select version: ${version.label || 'Auto-save'} from ${formatDate(version.createdAt)}`}
+                    aria-pressed={selectedVersion?.id === version.id}
                   >
                     <div className="font-medium">{version.label || 'Auto-save'}</div>
                     <div className="text-xs text-gray-500 dark:text-monarch-text-dark mt-1">
@@ -92,6 +95,7 @@ const VersionHistory: React.FC<VersionHistoryProps> = ({
                     <button
                       onClick={() => handleExportVersion(selectedVersion)}
                       className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-monarch-main hover:bg-gray-200 dark:hover:bg-monarch-main/80 rounded-lg transition-colors"
+                      aria-label="Export this version"
                     >
                       <DownloadIcon className="w-4 h-4 inline mr-1" />
                       Export
@@ -102,6 +106,7 @@ const VersionHistory: React.FC<VersionHistoryProps> = ({
                         onClose();
                       }}
                       className="px-3 py-1.5 text-sm bg-monarch-accent hover:bg-monarch-accent-hover text-white rounded-lg transition-colors"
+                      aria-label="Restore this version"
                     >
                       Restore
                     </button>

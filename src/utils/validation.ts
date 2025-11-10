@@ -1,7 +1,5 @@
 import { ValidationError } from '@/src/errors';
-
-const MAX_PROMPT_LENGTH = 5000;
-const MAX_TEXT_LENGTH = 50000;
+import { MAX_PROMPT_LENGTH, MAX_TEXT_LENGTH } from '@/src/constants';
 
 /**
  * Validates a prompt string

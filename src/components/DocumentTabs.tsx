@@ -43,6 +43,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
             onClick={(e) => onCloseDocument(doc.id, e)}
             className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-gray-200 dark:hover:bg-monarch-main transition-opacity"
             title="Close document"
+            aria-label={`Close document: ${doc.title}`}
           >
             <CloseIcon className="w-3.5 h-3.5" />
           </button>
@@ -52,6 +53,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
         onClick={onNewDocument}
         className="px-3 py-2 text-sm text-gray-500 dark:text-monarch-text-dark hover:text-monarch-accent hover:bg-gray-100 dark:hover:bg-monarch-main/30 transition-colors"
         title="New document"
+        aria-label="Create new document"
       >
         +
       </button>

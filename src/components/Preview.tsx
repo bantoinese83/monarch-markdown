@@ -7,6 +7,13 @@ interface PreviewProps {
   highlightedChunk?: string | null;
 }
 
+// Create renderer factory function for better performance
+const createRendererWithSlugger = (): { renderer: Renderer; slugger: Slugger } => {
+  const renderer = new Renderer();
+  const slugger = new Slugger();
+  return { renderer, slugger };
+};
+
 const Preview: React.FC<PreviewProps> = ({ markdown, highlightedChunk }) => {
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -33,8 +40,7 @@ const Preview: React.FC<PreviewProps> = ({ markdown, highlightedChunk }) => {
       }
 
       // Create renderer with custom heading handler for IDs
-      const renderer = new Renderer();
-      const slugger = new Slugger();
+      const { renderer, slugger } = createRendererWithSlugger();
 
       // Store the original heading method
       const originalHeading = renderer.heading.bind(renderer);

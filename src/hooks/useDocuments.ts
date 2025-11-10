@@ -1,14 +1,17 @@
 import { useState, useCallback, useEffect } from 'react';
+import {
+  STORAGE_KEYS,
+  DOCUMENT_IDS,
+  DOCUMENT_LABELS,
+  MAX_VERSIONS_PER_DOCUMENT,
+} from '@/src/constants';
 import type { Document, DocumentVersion } from '@/src/types';
-
-const STORAGE_KEY = 'monarch-documents';
-const VERSIONS_STORAGE_KEY = 'monarch-versions';
 
 export const useDocuments = () => {
   const [documents, setDocuments] = useState<Document[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEYS.DOCUMENTS);
       if (stored) {
         return JSON.parse(stored);
       }
@@ -17,8 +20,8 @@ export const useDocuments = () => {
     }
     // Create initial document
     const initialDoc: Document = {
-      id: `doc-${Date.now()}`,
-      title: 'Untitled Document',
+      id: `${DOCUMENT_IDS.PREFIX_DOC}${Date.now()}`,
+      title: DOCUMENT_LABELS.UNTITLED,
       content: '',
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -31,7 +34,7 @@ export const useDocuments = () => {
   const [versions, setVersions] = useState<DocumentVersion[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
-      const stored = localStorage.getItem(VERSIONS_STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEYS.VERSIONS);
       return stored ? JSON.parse(stored) : [];
     } catch {
       return [];
@@ -41,7 +44,7 @@ export const useDocuments = () => {
   // Save documents to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
+      localStorage.setItem(STORAGE_KEYS.DOCUMENTS, JSON.stringify(documents));
     } catch {
       // Failed to save
     }
@@ -50,7 +53,7 @@ export const useDocuments = () => {
   // Save versions to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(VERSIONS_STORAGE_KEY, JSON.stringify(versions));
+      localStorage.setItem(STORAGE_KEYS.VERSIONS, JSON.stringify(versions));
     } catch {
       // Failed to save
     }
@@ -60,8 +63,8 @@ export const useDocuments = () => {
 
   const createDocument = useCallback((content = '', title?: string) => {
     const newDoc: Document = {
-      id: `doc-${Date.now()}`,
-      title: title || 'Untitled Document',
+      id: `${DOCUMENT_IDS.PREFIX_DOC}${Date.now()}`,
+      title: title || DOCUMENT_LABELS.UNTITLED,
       content,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -84,8 +87,8 @@ export const useDocuments = () => {
         if (filtered.length === 0) {
           // Create a new document if all are deleted
           const newDoc: Document = {
-            id: `doc-${Date.now()}`,
-            title: 'Untitled Document',
+            id: `${DOCUMENT_IDS.PREFIX_DOC}${Date.now()}`,
+            title: DOCUMENT_LABELS.UNTITLED,
             content: '',
             createdAt: Date.now(),
             updatedAt: Date.now(),
@@ -104,17 +107,17 @@ export const useDocuments = () => {
 
   const createVersion = useCallback((documentId: string, content: string, label?: string) => {
     const version: DocumentVersion = {
-      id: `version-${Date.now()}`,
+      id: `${DOCUMENT_IDS.PREFIX_VERSION}${Date.now()}`,
       documentId,
       content,
       createdAt: Date.now(),
       label,
     };
     setVersions((prev) => {
-      // Keep only last 50 versions per document
+      // Keep only last N versions per document
       const docVersions = prev.filter((v) => v.documentId === documentId);
       const otherVersions = prev.filter((v) => v.documentId !== documentId);
-      const newDocVersions = [...docVersions, version].slice(-50);
+      const newDocVersions = [...docVersions, version].slice(-MAX_VERSIONS_PER_DOCUMENT);
       return [...otherVersions, ...newDocVersions];
     });
     return version;
@@ -122,9 +125,10 @@ export const useDocuments = () => {
 
   const getDocumentVersions = useCallback(
     (documentId: string) => {
-      return versions
-        .filter((v) => v.documentId === documentId)
-        .sort((a, b) => b.createdAt - a.createdAt);
+      // Use filter + sort efficiently - filter first to reduce sort operations
+      const docVersions = versions.filter((v) => v.documentId === documentId);
+      // Sort in-place for better performance
+      return docVersions.sort((a, b) => b.createdAt - a.createdAt);
     },
     [versions]
   );

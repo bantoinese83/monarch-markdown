@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { STORAGE_KEYS, MAX_FIND_HISTORY_ENTRIES } from '@/src/constants';
 import { ChevronUpIcon, ChevronDownIcon, CloseIcon } from './icons';
 
 interface FindReplaceProps {
@@ -40,7 +41,7 @@ const FindReplace: React.FC<FindReplaceProps> = ({
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const storedHistory = localStorage.getItem('monarch-find-history');
+    const storedHistory = localStorage.getItem(STORAGE_KEYS.FIND_HISTORY);
     if (storedHistory) {
       try {
         setSearchHistory(JSON.parse(storedHistory));
@@ -52,10 +53,13 @@ const FindReplace: React.FC<FindReplaceProps> = ({
 
   const addToHistory = (term: string) => {
     if (!term.trim()) return;
-    // Add term to front, remove duplicates, and cap at 10 entries
-    const newHistory = [term, ...searchHistory.filter((t) => t !== term)].slice(0, 10);
+    // Add term to front, remove duplicates, and cap at max entries
+    const newHistory = [term, ...searchHistory.filter((t) => t !== term)].slice(
+      0,
+      MAX_FIND_HISTORY_ENTRIES
+    );
     setSearchHistory(newHistory);
-    localStorage.setItem('monarch-find-history', JSON.stringify(newHistory));
+    localStorage.setItem(STORAGE_KEYS.FIND_HISTORY, JSON.stringify(newHistory));
   };
 
   const selectMatch = useCallback(
@@ -210,6 +214,8 @@ const FindReplace: React.FC<FindReplaceProps> = ({
             onClick={() => setMatchCase(!matchCase)}
             className={`p-1 rounded text-xs font-mono font-bold ${matchCase ? 'bg-monarch-accent text-white' : 'bg-gray-300 dark:bg-monarch-main hover:bg-gray-400 dark:hover:bg-monarch-light'}`}
             title="Match Case"
+            aria-label="Toggle case-sensitive search"
+            aria-pressed={matchCase}
           >
             Aa
           </button>
@@ -221,6 +227,7 @@ const FindReplace: React.FC<FindReplaceProps> = ({
             disabled={matches.length === 0}
             className="p-1 rounded hover:bg-gray-300 dark:hover:bg-monarch-main disabled:opacity-50"
             title="Previous match"
+            aria-label="Go to previous match"
           >
             <ChevronUpIcon className="w-4 h-4" />
           </button>
@@ -229,6 +236,7 @@ const FindReplace: React.FC<FindReplaceProps> = ({
             disabled={matches.length === 0}
             className="p-1 rounded hover:bg-gray-300 dark:hover:bg-monarch-main disabled:opacity-50"
             title="Next match"
+            aria-label="Go to next match"
           >
             <ChevronDownIcon className="w-4 h-4" />
           </button>
@@ -245,6 +253,7 @@ const FindReplace: React.FC<FindReplaceProps> = ({
             onClick={handleReplace}
             disabled={matches.length === 0}
             className="px-3 py-1 text-sm rounded-md bg-monarch-accent hover:bg-monarch-accent-hover text-white disabled:opacity-50 transition-colors"
+            aria-label="Replace current match"
           >
             Replace
           </button>
@@ -252,6 +261,7 @@ const FindReplace: React.FC<FindReplaceProps> = ({
             onClick={handleReplaceAll}
             disabled={matches.length === 0}
             className="px-3 py-1 text-sm rounded-md bg-monarch-accent hover:bg-monarch-accent-hover text-white disabled:opacity-50 transition-colors"
+            aria-label="Replace all matches"
           >
             All
           </button>
@@ -261,6 +271,7 @@ const FindReplace: React.FC<FindReplaceProps> = ({
         onClick={onClose}
         className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-300 dark:hover:bg-monarch-main"
         title="Close (Esc)"
+        aria-label="Close find and replace"
       >
         <CloseIcon className="w-4 h-4" />
       </button>

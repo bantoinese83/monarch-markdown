@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import {
   Header,
   Toolbar,
@@ -17,6 +17,7 @@ import {
 } from '@/src/components';
 import { useMarkdownContext, useToastContext } from '@/src/contexts';
 import {
+  useChatTools,
   useDocumentStats,
   useSpellcheck,
   useFindReplace,
@@ -26,15 +27,15 @@ import {
   useUndoRedo,
   useDocuments,
 } from '@/src/hooks';
-import {
-  getWordAt,
-  insertTextAtCursor,
-  replaceSelection,
-  getSelection,
-  exportToHTML,
-  downloadFile,
-} from '@/src/utils';
+import { getWordAt, exportToHTML, downloadFile, applyFormattingToText } from '@/src/utils';
 import { fixGrammarAndSpelling } from '@/src/services';
+import {
+  VERSION_SNAPSHOT_INTERVAL_MS,
+  MAX_SPELLCHECK_SUGGESTIONS,
+  DOCUMENT_IDS,
+  DOCUMENT_LABELS,
+  EXPORT,
+} from '@/src/constants';
 import type {
   FormattingAction,
   MisspelledWord,
@@ -84,21 +85,24 @@ const App: React.FC = () => {
 
   // Document management and version history
   const { createVersion, getDocumentVersions } = useDocuments();
-  const documentVersions = getDocumentVersions('current-doc');
+  const documentVersions = useMemo(
+    () => getDocumentVersions(DOCUMENT_IDS.CURRENT_DOC),
+    [getDocumentVersions]
+  );
 
   // Auto-create version snapshots every 2 minutes
   useEffect(() => {
     if (!markdown.trim()) return;
     const interval = setInterval(() => {
-      createVersion('current-doc', markdown);
-    }, 120000); // 2 minutes
+      createVersion(DOCUMENT_IDS.CURRENT_DOC, markdown);
+    }, VERSION_SNAPSHOT_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [markdown, createVersion]);
 
   // Create initial version on mount
   useEffect(() => {
     if (markdown) {
-      createVersion('current-doc', markdown, 'Initial');
+      createVersion(DOCUMENT_IDS.CURRENT_DOC, markdown, DOCUMENT_LABELS.INITIAL);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -143,7 +147,7 @@ const App: React.FC = () => {
           (w: MisspelledWord) => w.index === wordInfo.index
         );
         if (isMisspelled) {
-          const suggestions = typo.suggest(isMisspelled.word, 5);
+          const suggestions = typo.suggest(isMisspelled.word, MAX_SPELLCHECK_SUGGESTIONS);
           setContextMenu({
             x: event.clientX,
             y: event.clientY,
@@ -163,11 +167,11 @@ const App: React.FC = () => {
   const handleExport = useCallback(
     (format: 'md' | 'html' = 'md') => {
       if (format === 'html') {
-        const htmlContent = exportToHTML(markdown, 'Monarch Export');
-        downloadFile(htmlContent, 'monarch-export.html', 'text/html;charset=utf-8');
+        const htmlContent = exportToHTML(markdown, EXPORT.DEFAULT_TITLE);
+        downloadFile(htmlContent, EXPORT.HTML_FILENAME, EXPORT.HTML_MIME_TYPE);
         addToast('Exported as HTML');
       } else {
-        downloadFile(markdown, 'monarch-export.md', 'text/markdown;charset=utf-8');
+        downloadFile(markdown, EXPORT.MARKDOWN_FILENAME, EXPORT.MARKDOWN_MIME_TYPE);
         addToast('Exported as Markdown');
       }
     },
@@ -238,35 +242,12 @@ const App: React.FC = () => {
 
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
-      const selectedText = markdown.substring(start, end);
-      let newText = '';
-      let newSelectionStart = start;
-      let newSelectionEnd = end;
-
-      const syntaxMap = {
-        bold: { prefix: '**', suffix: '**', placeholder: 'bold text' },
-        italic: { prefix: '*', suffix: '*', placeholder: 'italic text' },
-        strikethrough: { prefix: '~~', suffix: '~~', placeholder: 'strikethrough' },
-        heading: { prefix: '### ', suffix: '', placeholder: 'Heading' },
-        quote: { prefix: '> ', suffix: '', placeholder: 'Quote' },
-        code: { prefix: '`', suffix: '`', placeholder: 'code' },
-        link: { prefix: '[', suffix: '](url)', placeholder: 'link text' },
-        image: { prefix: '![', suffix: '](url)', placeholder: 'alt text' },
-        ul: { prefix: '- ', suffix: '', placeholder: 'List item' },
-        ol: { prefix: '1. ', suffix: '', placeholder: 'List item' },
-      };
-
-      const format = syntaxMap[action];
-
-      if (selectedText) {
-        newText = `${format.prefix}${selectedText}${format.suffix}`;
-        newSelectionStart = start;
-        newSelectionEnd = start + newText.length;
-      } else {
-        newText = `${format.prefix}${format.placeholder}${format.suffix}`;
-        newSelectionStart = start + format.prefix.length;
-        newSelectionEnd = newSelectionStart + format.placeholder.length;
-      }
+      const { newText, newSelectionStart, newSelectionEnd } = applyFormattingToText(
+        action,
+        markdown,
+        start,
+        end
+      );
 
       setMarkdown(`${markdown.substring(0, start)}${newText}${markdown.substring(end)}`);
 
@@ -278,26 +259,11 @@ const App: React.FC = () => {
     [markdown, setMarkdown]
   );
 
-  const chatTools = useCallback(
-    () => ({
-      getSelection: () => getSelection(editorRef.current, markdown),
-      getCurrentDocument: () => markdown,
-      replaceContent: (newContent: unknown) => {
-        if (typeof newContent === 'string') {
-          setMarkdown(newContent);
-        }
-      },
-      insertAtCursor: (textToInsert: unknown) => {
-        if (typeof textToInsert !== 'string' || !editorRef.current) return;
-        insertTextAtCursor(editorRef.current, markdown, textToInsert, setMarkdown);
-      },
-      replaceSelection: (replacementText: unknown) => {
-        if (typeof replacementText !== 'string' || !editorRef.current) return;
-        replaceSelection(editorRef.current, markdown, replacementText, setMarkdown);
-      },
-    }),
-    [markdown, setMarkdown]
-  );
+  const chatTools = useChatTools({
+    editorRef: editorRef as React.RefObject<HTMLTextAreaElement>,
+    markdown,
+    setMarkdown,
+  });
 
   return (
     <div
@@ -314,15 +280,15 @@ const App: React.FC = () => {
         onToggleOutline={handleToggleOutline}
         isOutlineOpen={isOutlineOpen}
       />
-      <div className="flex flex-grow overflow-hidden">
+      <div className="flex grow overflow-hidden">
         <OutlinePanel
           isOpen={isOutlineOpen}
           onClose={() => setIsOutlineOpen(false)}
           outline={outlineItems}
         />
-        <main ref={mainContentRef} className="flex-grow flex flex-col md:flex-row overflow-hidden">
+        <main ref={mainContentRef} className="grow flex flex-col md:flex-row overflow-hidden">
           <div
-            className="w-full md:w-[var(--editor-width)] flex flex-col h-full relative bg-white dark:bg-monarch-bg-light"
+            className="w-full md:w-[calc(var(--editor-width))] flex flex-col h-full relative bg-white dark:bg-monarch-bg-light"
             style={{ '--editor-width': `${editorWidth}%` } as React.CSSProperties}
           >
             <Toolbar
@@ -418,7 +384,7 @@ const App: React.FC = () => {
           onClose={() => setContextMenu(null)}
         />
       )}
-      <div className="fixed top-20 right-4 z-[100]">
+      <div className="fixed top-20 right-4 z-100">
         {toasts.map((toast) => (
           <Toast key={toast.id} toast={toast} onDismiss={removeToast} />
         ))}

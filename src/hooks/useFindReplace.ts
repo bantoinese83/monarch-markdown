@@ -8,14 +8,29 @@ export const useFindReplace = (markdown: string) => {
 
   const matches = useMemo(() => {
     if (!findTerm) return [];
+
+    // Escape special regex characters
+    const escapedTerm = findTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const flags = matchCase ? 'g' : 'gi';
-    const regex = new RegExp(findTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
-    const results: { index: number; length: number }[] = [];
-    let match;
-    while ((match = regex.exec(markdown)) !== null) {
-      results.push({ index: match.index, length: match[0].length });
+
+    // Use matchAll for better performance (native browser API)
+    try {
+      const regex = new RegExp(escapedTerm, flags);
+      const matches = Array.from(markdown.matchAll(regex));
+      return matches.map((match) => ({
+        index: match.index!,
+        length: match[0].length,
+      }));
+    } catch {
+      // Fallback for older browsers or invalid regex
+      const regex = new RegExp(escapedTerm, flags);
+      const results: { index: number; length: number }[] = [];
+      let match;
+      while ((match = regex.exec(markdown)) !== null) {
+        results.push({ index: match.index, length: match[0].length });
+      }
+      return results;
     }
-    return results;
   }, [findTerm, markdown, matchCase]);
 
   return {

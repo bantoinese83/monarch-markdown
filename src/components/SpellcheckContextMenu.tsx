@@ -97,6 +97,7 @@ const SpellcheckContextMenu: React.FC<SpellcheckContextMenuProps> = ({
               <button
                 onClick={() => onSelect(word, suggestion)}
                 className="w-full text-left px-3 py-1.5 text-sm text-gray-800 dark:text-monarch-text-dark hover:bg-gray-100 dark:hover:bg-monarch-main transition-colors"
+                aria-label={`Replace "${word.word}" with "${suggestion}"`}
               >
                 {suggestion}
               </button>

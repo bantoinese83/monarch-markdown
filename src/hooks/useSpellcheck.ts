@@ -1,4 +1,11 @@
 import { useState, useEffect } from 'react';
+import {
+  SPELLCHECK_DEBOUNCE_MS,
+  TYPO_JS_BASE_URL,
+  TYPO_JS_VERSION,
+  TYPO_JS_DICTIONARY_PATH,
+  TYPO_JS_DICTIONARY,
+} from '@/src/constants';
 import type { MisspelledWord } from '@/src/types';
 
 export const useSpellcheck = (markdown: string) => {
@@ -12,15 +19,12 @@ export const useSpellcheck = (markdown: string) => {
   useEffect(() => {
     const loadDictionary = async () => {
       try {
-        const affResponse = await fetch(
-          'https://cdn.jsdelivr.net/npm/typo-js@1.2.1/dictionaries/en_US/en_US.aff'
-        );
-        const dicResponse = await fetch(
-          'https://cdn.jsdelivr.net/npm/typo-js@1.2.1/dictionaries/en_US/en_US.dic'
-        );
+        const baseUrl = `${TYPO_JS_BASE_URL}${TYPO_JS_VERSION}${TYPO_JS_DICTIONARY_PATH}`;
+        const affResponse = await fetch(`${baseUrl}.aff`);
+        const dicResponse = await fetch(`${baseUrl}.dic`);
         const affData = await affResponse.text();
         const dicData = await dicResponse.text();
-        setTypo(new window.Typo('en_US', affData, dicData));
+        setTypo(new window.Typo(TYPO_JS_DICTIONARY, affData, dicData));
       } catch {
         // Failed to load spellchecking dictionary
       }
@@ -33,13 +37,21 @@ export const useSpellcheck = (markdown: string) => {
     if (!typo) return;
 
     const handler = setTimeout(() => {
+      // Use Set for O(1) lookup instead of array includes
       const words = markdown.match(/\b[a-zA-Z']+\b/g) || [];
-      const uniqueWords = [...new Set(words)];
-      const misspelled = uniqueWords.filter((word) => !typo.check(word));
+      const uniqueWords = Array.from(new Set(words)); // More efficient than spread + Set
+      const misspelledSet = new Set<string>();
+
+      // Filter misspelled words efficiently
+      for (const word of uniqueWords) {
+        if (!typo.check(word)) {
+          misspelledSet.add(word);
+        }
+      }
 
       const newMisspelledWords: MisspelledWord[] = [];
-      if (misspelled.length > 0) {
-        const misspelledSet = new Set(misspelled);
+      if (misspelledSet.size > 0) {
+        // Use the already created Set for O(1) lookups
         const regex = /\b[a-zA-Z']+\b/g;
         let match;
         while ((match = regex.exec(markdown)) !== null) {
@@ -53,7 +65,7 @@ export const useSpellcheck = (markdown: string) => {
         }
       }
       setMisspelledWords(newMisspelledWords);
-    }, 500);
+    }, SPELLCHECK_DEBOUNCE_MS);
 
     return () => clearTimeout(handler);
   }, [markdown, typo]);

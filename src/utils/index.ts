@@ -5,3 +5,4 @@ export * from './slugger';
 export * from './validation';
 export * from './editorUtils';
 export * from './exportUtils';
+export * from './chatUtils';

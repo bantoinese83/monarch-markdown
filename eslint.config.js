@@ -50,6 +50,10 @@ export default [
         process: 'readonly',
         __dirname: 'readonly',
         atob: 'readonly',
+        NodeJS: 'readonly',
+        React: 'readonly',
+        TextEncoder: 'readonly',
+        TextDecoder: 'readonly',
       },
     },
     plugins: {

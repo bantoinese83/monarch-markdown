@@ -1,10 +1,11 @@
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import { EXPORT } from '@/src/constants';
 
 /**
  * Exports markdown content as a styled HTML document
  */
-export const exportToHTML = (markdown: string, title = 'Monarch Export'): string => {
+export const exportToHTML = (markdown: string, title = EXPORT.DEFAULT_TITLE): string => {
   // Parse markdown to HTML
   const htmlContent = marked.parse(markdown, {
     gfm: true,

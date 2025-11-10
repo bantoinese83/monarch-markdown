@@ -1,5 +1,93 @@
 export { DEFAULT_TEMPLATES } from './templates';
 
+// ============================================================================
+// Storage Keys
+// ============================================================================
+export const STORAGE_KEYS = {
+  DOCUMENTS: 'monarch-documents',
+  VERSIONS: 'monarch-versions',
+  MARKDOWN_CONTENT: 'monarch-markdown-content',
+  FIND_HISTORY: 'monarch-find-history',
+  CUSTOM_TEMPLATES: 'monarch-custom-templates',
+} as const;
+
+// ============================================================================
+// Document & Version Constants
+// ============================================================================
+export const DOCUMENT_IDS = {
+  CURRENT_DOC: 'current-doc',
+  PREFIX_USER: 'user-',
+  PREFIX_MODEL: 'model-',
+  PREFIX_DOC: 'doc-',
+  PREFIX_VERSION: 'version-',
+} as const;
+
+export const DOCUMENT_LABELS = {
+  INITIAL: 'Initial',
+  UNTITLED: 'Untitled Document',
+} as const;
+
+export const MAX_VERSIONS_PER_DOCUMENT = 50;
+export const MAX_FIND_HISTORY_ENTRIES = 10;
+
+// ============================================================================
+// Export Constants
+// ============================================================================
+export const EXPORT = {
+  DEFAULT_TITLE: 'Monarch Export',
+  HTML_FILENAME: 'monarch-export.html',
+  MARKDOWN_FILENAME: 'monarch-export.md',
+  HTML_MIME_TYPE: 'text/html;charset=utf-8',
+  MARKDOWN_MIME_TYPE: 'text/markdown;charset=utf-8',
+} as const;
+
+// ============================================================================
+// Validation Constants
+// ============================================================================
+export const MAX_PROMPT_LENGTH = 5000;
+export const MAX_TEXT_LENGTH = 50000;
+export const MAX_STORAGE_SIZE = 4 * 1024 * 1024; // 4MB
+
+// ============================================================================
+// Time Constants (in milliseconds)
+// ============================================================================
+export const VERSION_SNAPSHOT_INTERVAL_MS = 120000; // 2 minutes
+export const SPELLCHECK_DEBOUNCE_MS = 500; // 500ms debounce for spellcheck
+export const SAVE_DEBOUNCE_MS = 500; // 500ms debounce for saving
+export const OUTLINE_DEBOUNCE_MS = 500; // 500ms debounce for outline generation
+
+// ============================================================================
+// Spellcheck Constants
+// ============================================================================
+export const MAX_SPELLCHECK_SUGGESTIONS = 5;
+export const TYPO_JS_VERSION = '1.2.1';
+export const TYPO_JS_DICTIONARY = 'en_US';
+export const TYPO_JS_BASE_URL = 'https://cdn.jsdelivr.net/npm/typo-js@';
+export const TYPO_JS_DICTIONARY_PATH = `/dictionaries/${TYPO_JS_DICTIONARY}/${TYPO_JS_DICTIONARY}`;
+
+// ============================================================================
+// Animation Constants
+// ============================================================================
+export const ANIMATION_DELAY_MULTIPLIER = 0.1; // seconds per item for staggered animations
+
+// ============================================================================
+// Editor Constants
+// ============================================================================
+export const TEXTAREA_MIN_ROWS = 1;
+export const TEXTAREA_MAX_ROWS = 5;
+
+// ============================================================================
+// Icon Constants
+// ============================================================================
+export const ICON_STROKE_WIDTH = 1.5;
+
+// ============================================================================
+// Performance Constants
+// ============================================================================
+export const MAX_UNDO_REDO_HISTORY = 50; // Limit undo/redo history to prevent memory leaks
+export const STREAM_UPDATE_THROTTLE_MS = 16; // ~60fps update rate for streaming
+export const TOAST_DURATION_MS = 5000; // Toast display duration in milliseconds
+
 export const INITIAL_MARKDOWN = `# 2025 professional web design directions: 7 strategic UX trends
 
 **By Ryan Kane** | *8 min read*

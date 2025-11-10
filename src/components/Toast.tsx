@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
+import { TOAST_DURATION_MS } from '@/src/constants';
 import type { Toast as ToastType } from '@/src/types';
 import { CheckCircleIcon, StopIcon } from './icons';
 
@@ -7,11 +8,11 @@ interface ToastProps {
   onDismiss: (id: number) => void;
 }
 
-const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
+const Toast: React.FC<ToastProps> = memo(({ toast, onDismiss }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onDismiss(toast.id);
-    }, 5000); // 5 seconds
+    }, TOAST_DURATION_MS);
 
     return () => {
       clearTimeout(timer);
@@ -41,6 +42,8 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
       </div>
     </div>
   );
-};
+});
+
+Toast.displayName = 'Toast';
 
 export default Toast;

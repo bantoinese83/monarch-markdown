@@ -1,6 +1,5 @@
 # Monarch Markdown
 
-
 <p align="center">
   <a href="https://monarch-markdown.vercel.app" target="_blank">
     <img src="https://img.shields.io/badge/Deployment-Vercel-000000?logo=vercel&logoColor=white" alt="Deployment: Vercel" />
@@ -115,11 +114,13 @@ The production build will be generated in the `dist` directory.
 ## 🌐 Live Demo
 
 **Deployed Application:**
+
 - 🔗 **URL**: [https://monarch-markdown.vercel.app](https://monarch-markdown.vercel.app)
 - 🚀 **Platform**: Vercel
 - ✨ **Status**: Live and ready to use
 
 Try out all the features including:
+
 - Real-time markdown editing and preview
 - AI-powered content generation
 - Mermaid diagram rendering

@@ -1,11 +1,12 @@
-export { useMarkdown } from './useMarkdown';
-export { useToast } from './useToast';
+export { useChatTools } from './useChatTools';
+export { useDocuments } from './useDocuments';
 export { useDocumentStats } from './useDocumentStats';
-export { useSpellcheck } from './useSpellcheck';
 export { useFindReplace } from './useFindReplace';
 export { useKeyboardShortcuts } from './useKeyboardShortcuts';
+export { useMarkdown } from './useMarkdown';
+export { useRequestCancellation } from './useRequestCancellation';
+export { useSpellcheck } from './useSpellcheck';
 export { useSplitter } from './useSplitter';
+export { useToast } from './useToast';
 export { useTts } from './useTts';
 export { useUndoRedo } from './useUndoRedo';
-export { useRequestCancellation } from './useRequestCancellation';
-export { useDocuments } from './useDocuments';

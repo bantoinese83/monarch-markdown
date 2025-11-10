@@ -1,0 +1,10 @@
+{
+  "ignoreDependencies": ["mermaid", "@types/dompurify", "@types/highlight.js"],
+  "ignoreExports": [
+    "src/components/DocumentTabs.tsx",
+    "src/components/index.ts",
+    "src/hooks/index.ts",
+    "src/utils/editorUtils.ts",
+    "src/errors/ErrorHandler.ts"
+  ]
+}

@@ -45,6 +45,7 @@ class ErrorBoundary extends Component<Props, State> {
                 window.location.reload();
               }}
               className="px-4 py-2 bg-monarch-accent hover:bg-monarch-accent-hover text-white rounded-lg transition-colors"
+              aria-label="Reload page to recover from error"
             >
               Reload Page
             </button>

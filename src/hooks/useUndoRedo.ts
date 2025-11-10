@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { MAX_UNDO_REDO_HISTORY } from '@/src/constants';
 
 interface UseUndoRedoReturn {
   undo: () => void;
@@ -32,17 +33,25 @@ export const useUndoRedo = (
     previousValueRef.current = currentValue;
 
     setHistory((prev) => {
+      // Slice to current position and add new value
       const newHistory = prev.slice(0, historyIndex + 1);
       const lastValue = newHistory[newHistory.length - 1];
+
       if (lastValue !== currentValue) {
-        return [...newHistory, currentValue];
+        const updatedHistory = [...newHistory, currentValue];
+        // Limit history size to prevent memory leaks
+        if (updatedHistory.length > MAX_UNDO_REDO_HISTORY) {
+          return updatedHistory.slice(-MAX_UNDO_REDO_HISTORY);
+        }
+        return updatedHistory;
       }
       return prev;
     });
 
     setHistoryIndex((prev) => {
       const newIndex = prev + 1;
-      return newIndex;
+      // Adjust index if history was truncated
+      return Math.min(newIndex, MAX_UNDO_REDO_HISTORY - 1);
     });
   }, [currentValue, historyIndex]);
 
@@ -64,10 +73,13 @@ export const useUndoRedo = (
     }
   }, [history, historyIndex, setValue]);
 
+  const canUndo = useMemo(() => historyIndex > 0, [historyIndex]);
+  const canRedo = useMemo(() => historyIndex < history.length - 1, [historyIndex, history.length]);
+
   return {
     undo,
     redo,
-    canUndo: historyIndex > 0,
-    canRedo: historyIndex < history.length - 1,
+    canUndo,
+    canRedo,
   };
 };

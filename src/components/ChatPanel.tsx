@@ -2,6 +2,14 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { Chat } from '@google/genai';
 import { CloseIcon, SendIcon, BotIcon, LoaderIcon } from './icons';
 import { createChatSession } from '@/src/services';
+import {
+  ANIMATION_DELAY_MULTIPLIER,
+  TEXTAREA_MIN_ROWS,
+  TEXTAREA_MAX_ROWS,
+  DOCUMENT_IDS,
+  STREAM_UPDATE_THROTTLE_MS,
+} from '@/src/constants';
+import { processFunctionCall, updateMessageHistory } from '@/src/utils';
 import type { ChatMessage } from '@/src/types';
 import { marked } from 'marked';
 import { useRequestCancellation } from '@/src/hooks/useRequestCancellation';
@@ -65,64 +73,68 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ isOpen, onClose, tools, addToast 
 
       setIsLoading(true);
       const userMessage: ChatMessage = {
-        id: `user-${Date.now()}`,
+        id: `${DOCUMENT_IDS.PREFIX_USER}${Date.now()}`,
         role: 'user',
         parts: [{ text: message }],
       };
       setHistory((prev: ChatMessage[]) => [...prev, userMessage]);
       setInput('');
 
+      const textChunks: string[] = [];
+      let currentMessageId = `${DOCUMENT_IDS.PREFIX_MODEL}${Date.now()}`;
+      let updateThrottle: ReturnType<typeof setTimeout> | null = null;
+
       try {
         let stream = await chat.sendMessageStream({ message });
 
         // Check if request was cancelled
         if (currentRequestId !== requestIdRef.current) {
+          if (updateThrottle) clearTimeout(updateThrottle);
           return;
         }
-        let modelResponseText = '';
-        let currentMessageId = `model-${Date.now()}`;
 
         for await (const chunk of stream) {
           if (chunk.functionCalls) {
             const calls = chunk.functionCalls;
+            await Promise.all(calls.map((call) => processFunctionCall({ call, tools, addToast })));
+          } else if (chunk.text) {
+            textChunks.push(chunk.text);
+            const modelResponseText = textChunks.join('');
 
-            // Call all functions in parallel
-            await Promise.all(
-              calls.map(async (call) => {
-                const callId = call.id ?? '';
-                const callName = call.name ?? '';
-                const callArgs = call.args ?? {};
-                const toolResult = tools[callName]?.(...Object.values(callArgs));
-                addToast(`AI used tool: ${callName}`, 'success');
-                return {
-                  id: callId,
-                  name: callName,
-                  response: { result: toolResult },
-                };
-              })
-            );
-          } else {
-            modelResponseText += chunk.text;
-            // Use a functional update to stream response into the history
-            setHistory((prev: ChatMessage[]) => {
-              const lastMessage = prev[prev.length - 1];
-              if (
-                lastMessage &&
-                lastMessage.role === 'model' &&
-                lastMessage.id === currentMessageId
-              ) {
-                lastMessage.parts[0].text = modelResponseText;
-                return [...prev];
-              } else {
-                return [
-                  ...prev,
-                  { id: currentMessageId, role: 'model', parts: [{ text: modelResponseText }] },
-                ];
-              }
-            });
+            // Throttle updates to avoid excessive re-renders
+            if (updateThrottle) {
+              clearTimeout(updateThrottle);
+            }
+            updateThrottle = setTimeout(() => {
+              setHistory((prev: ChatMessage[]) =>
+                updateMessageHistory({
+                  history: prev,
+                  messageId: currentMessageId,
+                  text: modelResponseText,
+                })
+              );
+            }, STREAM_UPDATE_THROTTLE_MS);
           }
         }
+
+        // Final update with all chunks
+        if (updateThrottle) {
+          clearTimeout(updateThrottle);
+        }
+        const finalText = textChunks.join('');
+        setHistory((prev: ChatMessage[]) =>
+          updateMessageHistory({
+            history: prev,
+            messageId: currentMessageId,
+            text: finalText,
+          })
+        );
       } catch (error) {
+        // Cleanup throttle on error
+        if (updateThrottle) {
+          clearTimeout(updateThrottle);
+        }
+
         // Check if request was cancelled
         if (currentRequestId !== requestIdRef.current) {
           return;
@@ -178,7 +190,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ isOpen, onClose, tools, addToast 
           <div
             key={msg.id}
             className={`flex items-start gap-3 animate-fadeIn ${msg.role === 'user' ? 'justify-end' : ''}`}
-            style={{ animationDelay: `${index * 0.1}s` }}
+            style={{ animationDelay: `${index * ANIMATION_DELAY_MULTIPLIER}s` }}
           >
             {msg.role === 'model' && (
               <div className="w-8 h-8 rounded-full bg-monarch-main flex items-center justify-center flex-shrink-0 shadow-sm transition-transform duration-200 hover:scale-110">
@@ -226,7 +238,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ isOpen, onClose, tools, addToast 
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Monarch to help..."
-            rows={Math.max(1, Math.min(5, input.split('\n').length))}
+            rows={Math.max(
+              TEXTAREA_MIN_ROWS,
+              Math.min(TEXTAREA_MAX_ROWS, input.split('\n').length)
+            )}
             disabled={isLoading || !chat}
             className="w-full pl-12 pr-14 py-3 border border-gray-300 dark:border-monarch-main bg-white dark:bg-monarch-bg rounded-xl focus:ring-2 focus:ring-monarch-accent focus:border-monarch-accent focus:outline-none transition-all duration-200 disabled:opacity-50 resize-none shadow-sm text-gray-900 dark:text-monarch-text placeholder-gray-400 dark:placeholder-monarch-text-dark/60"
           />
