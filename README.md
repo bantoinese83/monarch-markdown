@@ -304,5 +304,5 @@ This project is private and proprietary.
 ---
 
 <div align="center">
-  Made with ❤️ using React, TypeScript, and AI
+  Built by Monarch Labs Made with ❤️ using React, TypeScript, and AI
 </div>
