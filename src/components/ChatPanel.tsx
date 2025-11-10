@@ -155,7 +155,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ isOpen, onClose, tools, addToast 
 
   return (
     <aside
-      className={`flex-shrink-0 bg-white dark:bg-monarch-bg-light border-l border-gray-200 dark:border-monarch-main z-20 flex flex-col transition-all duration-300 ease-in-out overflow-hidden shadow-lg ${
+      className={`shrink-0 bg-white dark:bg-monarch-bg-light border-l border-gray-200 dark:border-monarch-main z-20 flex flex-col transition-all duration-300 ease-in-out overflow-hidden shadow-lg ${
         isOpen ? 'w-[400px] animate-slideInRight' : 'w-0'
       }`}
     >
@@ -233,7 +233,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ isOpen, onClose, tools, addToast 
           <button
             onClick={() => handleSendMessage(input)}
             disabled={isLoading || !input.trim()}
-            className="absolute right-2 bottom-2.5 p-2.5 rounded-lg bg-monarch-accent hover:bg-monarch-accent-hover text-white disabled:bg-monarch-light/50 transition-all duration-200 hover:scale-110 active:scale-95 disabled:hover:scale-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-monarch-accent focus:ring-offset-2"
+            className="absolute right-2 bottom-2.5 p-2.5 rounded-lg bg-[#9d5bff] hover:bg-[#b88cff] text-white disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 transition-all duration-200 hover:scale-110 active:scale-95 disabled:hover:scale-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9d5bff] focus:ring-offset-2"
             aria-label="Send message"
           >
             <SendIcon className="w-5 h-5" />

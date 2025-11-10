@@ -1,8 +1,21 @@
 # Monarch Markdown
 
-<div align="center">
-  <img width="1200" height="475" alt="Monarch Markdown" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+
+<p align="center">
+  <a href="https://monarch-markdown.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/Deployment-Vercel-000000?logo=vercel&logoColor=white" alt="Deployment: Vercel" />
+  </a>
+  <a href="https://react.dev/" target="_blank">
+    <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=61DAFB&labelColor=111827" alt="React 19" />
+  </a>
+  <a href="https://vitejs.dev/" target="_blank">
+    <img src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=FFD62E&labelColor=111827" alt="Vite 6" />
+  </a>
+  <a href="https://www.typescriptlang.org/" target="_blank">
+    <img src="https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white&labelColor=0b1120" alt="TypeScript Strict" />
+  </a>
+  <img src="https://img.shields.io/badge/License-Private-important?labelColor=5b21b6&color=9d5bff" alt="License: Private" />
+</p>
 
 <div align="center">
   <img src="docs/images/screenshot.png" alt="Monarch Markdown Interface" width="100%" />
