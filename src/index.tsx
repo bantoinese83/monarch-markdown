@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Analytics } from '@vercel/analytics/react';
 import App from './App';
 import { ErrorBoundary } from '@/src/components';
 import { MarkdownProvider, ToastProvider } from '@/src/contexts';
@@ -17,6 +18,7 @@ root.render(
       <MarkdownProvider>
         <ToastProvider>
           <App />
+          <Analytics />
         </ToastProvider>
       </MarkdownProvider>
     </ErrorBoundary>
