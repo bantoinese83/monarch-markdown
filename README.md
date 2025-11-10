@@ -13,13 +13,24 @@
   <strong>A modern, AI-powered markdown editor with real-time preview, grammar checking, and intelligent content generation</strong>
 </div>
 
+<div align="center">
+  <a href="https://monarch-markdown.vercel.app" target="_blank">
+    <strong>🚀 Live Demo</strong>
+  </a>
+  <span> • </span>
+  <a href="https://monarch-markdown.vercel.app" target="_blank">
+    monarch-markdown.vercel.app
+  </a>
+</div>
+
 <br />
 
 <div align="center">
   <a href="#features">Features</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#tech-stack">Tech Stack</a> •
-  <a href="#development">Development</a>
+  <a href="#development">Development</a> •
+  <a href="#live-demo">Live Demo</a>
 </div>
 
 <br />
@@ -87,6 +98,21 @@ npm run build
 ```
 
 The production build will be generated in the `dist` directory.
+
+## 🌐 Live Demo
+
+**Deployed Application:**
+- 🔗 **URL**: [https://monarch-markdown.vercel.app](https://monarch-markdown.vercel.app)
+- 🚀 **Platform**: Vercel
+- ✨ **Status**: Live and ready to use
+
+Try out all the features including:
+- Real-time markdown editing and preview
+- AI-powered content generation
+- Mermaid diagram rendering
+- Template system
+- Version history
+- HTML export
 
 ## 🛠️ Tech Stack
 
