@@ -1,9 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
 html {
   scroll-behavior: smooth;
+}
+
+* {
+  @apply transition-colors duration-200;
 }
 
 .misspelled {
@@ -11,3 +14,62 @@ html {
   text-decoration-skip-ink: none;
 }
 
+/* Smooth scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgb(243 244 246);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background-color: #1a102c;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(209 213 219);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #2e1a52;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(156 163 175);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #4d2da3;
+}
+
+/* Focus ring improvements */
+.focus-ring {
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.focus-ring:focus {
+  outline: 2px solid #9d5bff;
+  outline-offset: 2px;
+}
+
+.dark .focus-ring:focus {
+  outline-offset-color: #1a102c;
+}
+
+/* Button hover effects */
+.btn-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-hover:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(157, 91, 255, 0.4);
+}
+
+.btn-hover:active {
+  transform: scale(1);
+}

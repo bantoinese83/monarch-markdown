@@ -13,7 +13,12 @@
     "allowJs": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@utils/*": ["./utils/*"],
+      "@services/*": ["./services/*"],
+      "@src/*": ["./src/*"],
+      "@constants": ["./constants"]
     },
     "allowImportingTsExtensions": true,
     "noEmit": true,
